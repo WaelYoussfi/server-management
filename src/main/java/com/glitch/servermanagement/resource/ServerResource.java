@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ServerResource {
     private final ServerServiceImplementation serverService;
+    @Operation(summary = "Retrieving servers", description = "Listing servers from the database (pagination: 30 servers each time)", tags = "Get")
     @GetMapping("/list")
     public ResponseEntity<Response> getServers() {
         return ResponseEntity.ok(
@@ -41,6 +44,7 @@ public class ServerResource {
             .status(HttpStatus.OK).statusCode(HttpStatus.OK.value())
             .build());
     }
+    @Operation(summary = "Pinging server", description = "Pinging a server to check whether its status is UP or DOWN and changing the status accordingly", tags = "Get")
     @GetMapping("/ping/{ipAddress}")
     public ResponseEntity<Response> pingServer(@PathVariable("ipAddress") String ipAddress) throws IOException {
         Server server = serverService.ping(ipAddress);
@@ -52,6 +56,7 @@ public class ServerResource {
             .status(HttpStatus.OK).statusCode(HttpStatus.OK.value())
             .build());
     }
+    @Operation(summary = "Adding a server", description = "Adding a server to the database", tags = "Post")
     @PostMapping("/save")
     public ResponseEntity<Response> saveSever(@RequestBody @Valid Server server) {
         return ResponseEntity.ok(
@@ -62,6 +67,7 @@ public class ServerResource {
             .status(HttpStatus.CREATED).statusCode(HttpStatus.CREATED.value())
             .build());
     }
+    @Operation(summary = "Retrieve a server", description = "Retrieving a specific server via its ID", tags = "Get")
     @GetMapping("/get/{id}")
     public ResponseEntity<Response> getServer(@PathVariable("id") Long id) {
         return ResponseEntity.ok(
@@ -72,6 +78,7 @@ public class ServerResource {
             .status(HttpStatus.OK).statusCode(HttpStatus.OK.value())
             .build());
     }
+    @Operation(summary = "Delete a server", description = "Deleting a server using its ID", tags = "Delete")
     @DeleteMapping("/get/{id}")
     public ResponseEntity<Response> deleteServer(@PathVariable("id") Long id) {
         return ResponseEntity.ok(
@@ -82,6 +89,7 @@ public class ServerResource {
             .status(HttpStatus.OK).statusCode(HttpStatus.OK.value())
             .build());
     }
+    @Operation(summary = "Retrieve server icon", description = "Retrieving the image file using its name", tags = "Get")
     @GetMapping(path = "/image/{fileName}", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] getServerImage(@PathVariable("fileName") String fileName) throws IOException {
         return Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/Downloads/"+fileName));
